@@ -13,6 +13,28 @@ macierz_kosztow = np.array([
     [6, 1, 7, 10, 6, INF]
 ])
 
+
+
+
+# Klasa dla przechowywania podproblemu
+class Podproblem:
+    def __init__(self, ID, macierz, LB, sciezka, kz):
+        self.ID = ID
+        self.macierz = macierz
+        self.LB = LB
+        self.sciezka = sciezka
+        self.kz = kz  # Kryterium zamknięcia (np. KZ0, KZ2, KZ3)
+
+    def __lt__(self, other):
+        return self.LB < other
+    def __gt__(self,other):
+        return self.LB>other
+    def __eq__(self,other):
+        return self.LB==other
+
+
+
+
 # Redukcja macierzy kosztów i wyznaczenie LB
 def redukuj_macierz(macierz):
     lb = 0
@@ -34,14 +56,23 @@ def redukuj_macierz(macierz):
     
     return lb, macierz
 
-# Klasa dla przechowywania podproblemu
-class Podproblem:
-    def __init__(self, ID, macierz, LB, sciezka, kz):
-        self.ID = ID
-        self.macierz = macierz
-        self.LB = LB
-        self.sciezka = sciezka
-        self.kz = kz  # Kryterium zamknięcia 
+def znajdz_najlepszy_zerowy(macierz):
+    n = len(macierz)
+    najlepszy_i = -1
+    najlepszy_j = -1
+    max_cena= -1
 
-    def __lt__(self, other):
-        return self.LB < other.LB
+    for i in range(n):
+        for j in range(n):
+            if macierz[i][j] == 0:          
+                min_wiersz = min([macierz[i][k] for k in range(n) if k != j and macierz[i][k] != INF])
+                min_kolumna = min([macierz[k][j] for k in range(n) if k != i and macierz[k][j] != INF])
+                cena = min_wiersz + min_kolumna
+                if cena > max_cena:
+                    max_cena = cena
+                    najlepszy_i = i
+                    najlepszy_j = j
+
+    return najlepszy_i, najlepszy_j, max_cena
+
+
