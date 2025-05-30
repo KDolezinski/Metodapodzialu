@@ -24,7 +24,7 @@ def subproblems(matrix: np.ndarray, lb: int = 0, i: int = None, j: int = None, c
     if action == "TAKE":
         path_copy = path.copy()
         path_copy.append((i, j))
-        check_cycle(path_copy, matrix, j)
+        check_cycle(path_copy, matrix)
         matrix_copy = matrix.copy()
         matrix_copy[i, :] = INF
         matrix_copy[:, j] = INF
@@ -42,8 +42,7 @@ def subproblems(matrix: np.ndarray, lb: int = 0, i: int = None, j: int = None, c
         res1 = subproblems(matrix_copy, lb, ni, nj, ncost, "TAKE", path_copy)
         res2 = subproblems(matrix_copy, lb, ni, nj, ncost, "SKIP", path_copy, res1[0])
         return min(res1, res2, key=lambda x: x[0])
-        #return res1
-
+    
     if action == "SKIP":
         matrix_copy = matrix.copy()
         matrix_copy[i, j] = INF
@@ -67,10 +66,9 @@ def subproblems(matrix: np.ndarray, lb: int = 0, i: int = None, j: int = None, c
 
     return INF, path
 
-def check_cycle(path:List[Tuple[int,int]],matrix:np.ndarray,j:int) -> bool:
+def check_cycle(path:List[Tuple[int,int]],matrix:np.ndarray) -> bool:
     if len(path) == 1 or len(path) == 0 or len(path) == len(matrix):
         return 
-    print("DANGER FOR:",j)
     print(path)
     d = dict(path)
     longest_path = []
